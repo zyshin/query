@@ -1,0 +1,68 @@
+{% load i18n %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>{% block title %}ESLWriter | Writing Style Search{% endblock %}</title>
+	{% load static %}
+	<script type="text/javascript" src="{% static 'common/js/jquery-1.11.3.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'common/js/bootstrap.min.js' %}"></script>
+	<link rel="shortcut icon" href="{% static 'common/img/eslwriter.ico' %}" />
+	<link rel="bookmark" href="{% static 'common/img/eslwriter.ico' %}" />
+	<link href="{% static 'common/css/bootstrap.min.css' %}" type="text/css" rel="stylesheet" />
+	<link href="{% static 'common/css/style.css' %}" type="text/css" rel="stylesheet" />
+	<script type="text/javascript">
+	$('.main .container').ready(function(){
+		$(".fixed-form input[type !='submit'][type!='checkbox']").attr('class','form-control fixed-width-control');
+		$(".fixed-form select").attr('class','form-control');
+		$(".fixed-form select").css("width","auto");
+	});
+	</script>
+	{% block resource %}{% endblock %}
+</head>
+
+<body><div id="wrapper">
+	<div id="header">{% block header %}
+		<div class='navbar'>
+			<div class='container' style='position: relative'>
+				<div class="navbar-header">
+					<a class="navbar-brand" href="{% url 'eslwriter' %}"></a>
+				</div>
+				<div id="navbar" class="navbar-collapse collapse" style="margin-right: -20px;">
+					{% block function_div %}
+					{% endblock %}
+					<ul class="nav navbar-nav navbar-right">
+						{% if not user.is_authenticated %}
+						<li><a href="{% url 'auth_login' %}">{% trans 'Sign in' %}</a></li>
+						<li><a href="{% url 'registration_register' %}">{% trans 'Sign up' %}</a></li>
+						{% else %}
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{ user.username|truncatechars:14 }} <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{% url 'account' %}">{% trans 'Account settings' %}</a></li>
+								<li class="divider"></li>
+								<li><a href="{% url 'auth_logout' %}">{% trans 'Logout' %}</a></li>
+							</ul>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	{% endblock %}</div>
+
+	<div id="content">
+		<div class="container">{% block content %}{% endblock %}</div>
+	</div>
+	<div id="footer">
+		<div style="width:900px;margin:0 auto;">
+			<hr style="height:1px; background:#E1E0DE;margin-bottom: 15px">
+			<a style="float:right;" href="mailto:eslwriter@foxmail.com">Contact&nbsp;Us</a>
+			<a style="float:right;margin-right: 20px" href="http://pi.cs.tsinghua.edu.cn/">About&nbsp;Us</a>
+			<div style="float:left;">ESLWriter<span style="color:#999999">&nbsp;&copy;&nbsp;2012&nbsp;-&nbsp;2015</span></div>
+		</div><br />
+	</div>
+</div></body>
+
+</html>

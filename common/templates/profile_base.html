@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{%load i18n%}
+
+{% block content %}
+<div class="row">
+	<div class="col-xs-3" style="margin-top:30px;">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">{% trans 'Settings' %}</a></h3>
+			</div>
+			<table class="table sidebar01">
+				<tr>
+					<td><a {%ifequal menu_index 1 %}class="actived"{%else%}href="{% url 'field_select' %}"{% endifequal %}>{% trans 'Field Setting' %}</a></td>
+				</tr>
+				<tr>
+					<td><a {%ifequal menu_index 2 %}class="actived"{%else%}href="{% url 'profile' %}"{% endifequal %}>{% trans 'Personal Corpus' %}</a></td>
+				</tr>
+				<tr>
+					<td><a {%if menu_index != 1 and menu_index != 2 %}class="actived"{%else%}href="{% url 'auth_password_change' %}"{% endif %}>{% trans 'Password Setting' %}</a></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="col-xs-9" style="margin-top:10px;">
+		{% block manage_block %}{% endblock %}
+	</div>
+</div>
+{% endblock %}

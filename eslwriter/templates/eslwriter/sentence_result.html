@@ -1,0 +1,77 @@
+<div class="ExampleList">
+	<h2><small id="currentShowResult">1-10</small><small> of </small><small id="totalResult" class="number">{{ gc }}</small></h2>
+	<ul id="SentenceList" class="resultlist">
+	{% for p, sentence in sr %}
+		<li class="listitem" item-index="{{ forloop.counter }}">
+			<p>{{ sentence|safe }}</p>
+			{% if p %}
+			<a style="text-overflow: ellipsis;white-space: nowrap;word-wrap: normal;" href="{{ p.url|default:'javascript:void(0)' }}" target="_blank"{% if p.url %} title="Link to source"{% endif %}>{{ p.source|safe }}</a>
+			{% comment %}<img src="{% static 'common/img/link.png' %}"></img>{% endcomment %}
+			{% endif %}
+		</li>
+	{% endfor %}
+	</ul>
+    {% if page_nums_list|length > 1 %}
+	<div class="page-nav-container">
+		<ul class="pagination" id="resultNavContainer">
+			<li page-nav="pre" class="disabled" nav-key="searchResult"><a aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+			{% for i in page_nums_list %}
+			<li page-index="{{ i }}" nav-key="searchResult"><a><span aria-hidden="true">{{ i }}</span></a></li>
+			{% endfor%}
+			<li page-nav="next" nav-key="searchResult"><a aria-label="Next"><span aria-hidden="true">»</span></a></li>
+		</ul>
+	</div>
+    {% endif %}
+</div>
+<script type="text/javascript">
+$('div.ExampleList').ready(function (){
+	var nav_dic = {'searchResult':{'data_select':'#SentenceList [item-index]','nav_container':'#resultNavContainer','pageSize':10,'curPage':1, 'totalCount':{{ sr|length }},'pageNums':0},};
+	var item = 'searchResult';
+	if($(nav_dic[item].data_select).length>0){
+		nav_dic[item].pageNums=parseInt((nav_dic[item].totalCount-1)/nav_dic[item].pageSize)+1;
+         $("#currentShowResult").text(String((nav_dic[item].curPage-1)*10+1)+'-'+ Math.min(nav_dic[item].curPage*10,nav_dic[item].totalCount));
+        hide_overflow($(nav_dic[item].data_select),nav_dic[item].pageSize,nav_dic[item].totalCount,nav_dic[item].curPage);
+        update_nav_status(nav_dic[item].nav_container,nav_dic[item].pageNums,nav_dic[item].curPage);
+        $(nav_dic[item].nav_container+' [page-index]').click(function(){
+            if(typeof($(this).attr('nav-key'))=='undefined')
+            {
+                return;
+            }
+            var item = $(this).attr('nav-key');
+            if(nav_dic[item].curPage!=$(this).attr('page-index')&& $(this).attr('page-index')<=nav_dic[item].pageNums && $(this).attr('page-index')>0){
+                nav_dic[item].curPage=Number($(this).attr('page-index'));
+                hide_overflow($(nav_dic[item].data_select),nav_dic[item].pageSize,nav_dic[item].totalCount,nav_dic[item].curPage);
+                update_nav_status(nav_dic[item].nav_container,nav_dic[item].pageNums,nav_dic[item].curPage);
+                $("#currentShowResult").text(String((nav_dic[item].curPage-1)*10+1)+'-'+ Math.min(nav_dic[item].curPage*10,nav_dic[item].totalCount));
+            }
+        });
+        $(nav_dic[item].nav_container+" [page-nav='pre']").click(function(){
+            if(typeof($(this).attr('nav-key'))=='undefined')
+            {
+                return;
+            }
+            var item = $(this).attr('nav-key');
+            if(nav_dic[item].curPage>1){
+                nav_dic[item].curPage-=1;
+                hide_overflow($(nav_dic[item].data_select),nav_dic[item].pageSize,nav_dic[item].totalCount,nav_dic[item].curPage);
+                update_nav_status(nav_dic[item].nav_container,nav_dic[item].pageNums,nav_dic[item].curPage);
+                $("#currentShowResult").text(String((nav_dic[item].curPage-1)*10+1)+'-'+ Math.min(nav_dic[item].curPage*10,nav_dic[item].totalCount));
+            } 
+        });
+        $(nav_dic[item].nav_container+" [page-nav='next']").click(function(){
+            if(typeof($(this).attr('nav-key'))=='undefined')
+            {
+                return;
+            }
+            var item = $(this).attr('nav-key');
+            if(nav_dic[item].curPage<nav_dic[item].pageNums){
+                nav_dic[item].curPage+=1;
+                hide_overflow($(nav_dic[item].data_select),nav_dic[item].pageSize,nav_dic[item].totalCount,nav_dic[item].curPage);
+                update_nav_status(nav_dic[item].nav_container,nav_dic[item].pageNums,nav_dic[item].curPage);
+                $("#currentShowResult").text(String((nav_dic[item].curPage-1)*10+1)+'-'+ Math.min(nav_dic[item].curPage*10,nav_dic[item].totalCount));
+            } 
+        });
+    }
+
+});
+</script>

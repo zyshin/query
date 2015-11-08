@@ -1,0 +1,718 @@
+/* Template-specific stuff
+ *
+ * Customizations just for the template; these are not necessary for anything
+ * with disabling the responsiveness.
+ */
+
+/* Account for fixed navbar */
+html,
+body {
+  margin:0;
+  padding:0;
+  height:100%;
+  background: #f5f5f5;
+}
+#wrapper {
+  min-height:100%;
+  position:relative;
+}
+#header {
+  background:#ededed;
+  padding:0px;
+}
+#content {
+  padding-bottom:100px; /* Height of the footer element */
+}
+#footer {
+  /*background:#ffab62;*/
+  width:100%;
+  height:80px;
+  position:absolute;
+  bottom:0;
+  left:0;
+}
+/*body {
+  padding-bottom: 30px;
+  background: #f5f5f5;
+}*/
+
+/*body,
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+  min-width: 900px;
+  position: relative;
+  height: auto;
+  min-height: 100% 
+}*/
+a {
+  color: #823E00;
+  text-decoration: none;
+}
+a:active,
+a:hover {
+  color: #401910;
+  text-decoration: none;
+}
+
+ul{
+  padding-left: 0px;
+}
+
+li {
+    list-style: none;
+}
+/* Don't let the lead text change font-size. */
+.lead {
+  font-size: 16px;
+}
+strong {
+  color: #F15A24;
+  font-weight: bold;
+}
+/* Finesse the page header spacing */
+.page-header {
+  margin-bottom: 30px;
+}
+.page-header .lead {
+  margin-bottom: 10px;
+}
+
+.textOverflow {
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+/* Non-responsive overrides
+ *
+ * Utilitze the following CSS to disable the responsive-ness of the container,
+ * grid system, and navbar.
+ */
+/*.main {
+  padding-bottom: 80px;
+}*/
+/* Reset the container */
+.container {
+  width: 900px;
+  max-width: none !important;
+}
+
+/* Demonstrate the grids */
+.col-xs-4 {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  background-color: rgba(86,61,124,.15);
+  border: 1px solid #ddd;
+  border: 1px solid rgba(86,61,124,.2);
+}
+
+.container .navbar-header,
+.container .navbar-collapse {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+/* navbar*/
+.navbar {
+  height: 50px;
+  background: #f15a24;
+  border-radius:0;
+  border:0;
+  width: 100%;
+  /*position: fixed;*/
+  z-index: 99  
+}
+
+/* Always float the navbar header */
+.navbar-header {
+  float: left;
+  display: block;
+}
+
+/* Undo the collapsing navbar */
+.navbar-collapse {
+  display: block !important;
+  height: auto !important;
+  padding-bottom: 0;
+  overflow: visible !important;
+  visibility: visible !important;
+}
+
+.navbar-toggle {
+  display: none;
+}
+.navbar-collapse {
+  border-top: 0;
+}
+
+.navbar-brand {
+  background: url(../img/logo_min.png) 0px -3px no-repeat;
+  width: 90px;
+  height: 30px;
+  margin-top: 10px;
+  margin-left: 0 !important;
+}
+
+/* Always apply the floated nav */
+.navbar-nav {
+  float: left;
+  margin: 0;
+}
+.navbar-nav > li {
+  float: left;
+}
+.navbar-nav > li > a {
+  padding: 15px;
+  color: #fff;
+  cursor: pointer;
+}
+.nav>li>a:focus, .nav>li>a:hover {
+text-decoration: none;
+background-color: #bf3616;
+}
+
+/* Redeclare since we override the float above */
+.navbar-nav.navbar-right {
+  float: right;
+}
+
+/* Undo custom dropdowns */
+.navbar .navbar-nav .open .dropdown-menu {
+  position: absolute;
+  float: left;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-width: 0 1px 1px;
+  border-radius: 0 0 4px 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+.navbar-default .navbar-nav .open .dropdown-menu > li > a {
+  color: #333;
+}
+.navbar .navbar-nav .open .dropdown-menu > li > a:hover,
+.navbar .navbar-nav .open .dropdown-menu > li > a:focus,
+.navbar .navbar-nav .open .dropdown-menu > .active > a,
+.navbar .navbar-nav .open .dropdown-menu > .active > a:hover,
+.navbar .navbar-nav .open .dropdown-menu > .active > a:focus {
+  color: #fff !important;
+  background-color: #bf3616 !important;
+}
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
+  background-color: #bf3616 !important;
+  border-color: #337ab7;
+}
+.navbar .navbar-nav .open .dropdown-menu > .disabled > a,
+.navbar .navbar-nav .open .dropdown-menu > .disabled > a:hover,
+.navbar .navbar-nav .open .dropdown-menu > .disabled > a:focus {
+  color: #999 !important;
+  background-color: transparent !important;
+}
+
+/* Undo form expansion */
+.navbar-form {
+  float: left;
+  width: 400px;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+  margin-right: 0;
+  margin-left: 0px;
+  border: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+/* Copy-pasted from forms.less since we mixin the .form-inline styles. */
+.navbar-form .form-group {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+.navbar-form .form-control {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 10px;
+  width: 100%
+}
+
+.form-group label{
+  display: block;
+}
+
+.fixed-width-control {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 10px;
+  width: 330px;
+}
+
+.navbar-form .form-control-static {
+  display: inline-block;
+}
+
+.navbar-form .input-group {
+  display: inline-table;
+  vertical-align: middle;
+}
+
+.navbar-form .input-group .input-group-addon,
+.navbar-form .input-group .input-group-btn,
+.navbar-form .input-group .form-control {
+  width: auto;
+}
+
+.navbar-form .input-group > .form-control {
+  width: 100%;
+}
+
+.navbar-form .control-label {
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+.navbar-form .radio,
+.navbar-form .checkbox {
+  display: inline-block;
+  margin-top: 0;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+.navbar-form .radio label,
+.navbar-form .checkbox label {
+  padding-left: 0;
+}
+
+.navbar-form .radio input[type="radio"],
+.navbar-form .checkbox input[type="checkbox"] {
+  position: relative;
+  margin-left: 0;
+}
+
+.navbar-form .has-feedback .form-control-feedback {
+  top: 0;
+}
+
+/* index */
+#LogoBack {
+  width: 100%;
+  height: 100px;
+}
+#LogoContainer {
+  width: 260px;
+  height: 100px;
+  margin-top: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  background: url(../img/logo.png) -20px -100px no-repeat;
+}
+#SearchBar{
+  margin:20px auto;
+  width:600px;
+  position:relative;
+  height: 40px;
+}
+#SearchBox {
+  width:500px;
+  position: relative;
+  float: left;
+  height: 40px;
+}
+#SearchInput, #SearchInputWriting {
+  box-sizing: border-box;
+  width: 500px;
+  height: 100%;
+  padding: 0 18px 0 18px;
+  font-size: 16px;
+  font-family: inherit;
+  border: #ccc solid 1px;
+  float: left;
+  outline-style:none;
+}
+#SearchBtn {
+  position: absolute;
+  width: 100px;
+  height: 40px;
+  top:0px;
+  right:0px;
+  -moz-box-shadow: inset 0px -1px 2px 0px #a8411e;
+  -webkit-box-shadow: inset 0px -1px 2px 0px #a8411e;
+  box-shadow: inset 0px -1px 2px 0px #a8411e;
+  background-color: #E45320;
+  display: inline-block;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  border: 0;
+}
+#SearchBtn:hover,. 
+#SearchBtn.hover{
+  background-color:#bd3720;
+}
+#SearchBtn:active, 
+#SearchBtn.active,
+#SearchBtn:focus, 
+#SearchBtn.focus {
+  background-color: #E07651
+}
+.hr {
+  clear: both;
+  display: block;
+  width: 100%;
+  height: 25px;
+  line-height: 25px;
+  position: relative;
+  margin: 30px 0 40px;
+}
+.hr-short .hr-inner {
+  width: 32%;
+  left: 50%;
+  margin-left: -16%;
+}
+.hr-inner {
+  border-top-color: #d8d8d8;
+  position: absolute;
+  height: 1px;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  margin-top: -1px;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+.hr-short .hr-inner-style {
+  border-radius: 20px;
+  height: 9px;
+  width: 9px;
+  border-width: 2px;
+  border-style: solid;
+  display: block;
+  position: absolute;
+  left: 50%;
+  margin-left: -5px;
+  margin-top: -5px;
+  border-color: #d8d8d8;
+}
+.ExampleList {
+  list-style-type: none;
+}
+.ExampleList h3{
+  text-align: center;
+}
+.ExampleList p{
+  text-align:justify;
+}
+.ExampleList strong {
+  color: #F15A24;
+  font-weight: bold;
+}
+.ExampleList i {
+  background: #ebebeb;
+  padding: 6px 12px;
+  width: 860px;
+  display: block;
+}
+/* footer */
+footer {
+  bottom: 0;
+  width: 100%;
+  margin-bottom: 30px;
+  margin-top: 80px;
+  clear: both;
+  /*position: absolute; */
+  left:0;
+  height: 80px;
+}
+footer a{
+ margin-left: 6px;
+}
+footer hr{
+  border-top:1px solid #d8d8d8 !important;
+}
+.footerinfoleft{
+  float: left;
+  width: 300px;
+}
+.footerinforight{
+  float: right;
+}
+
+/* Sign in */
+.form-signin,.form-signup {
+max-width: 360px;
+padding: 30px 15px 15px 15px;
+margin: 0 auto;
+}
+
+.form-signup p{
+  font-size: 12px;
+  margin-top: 10px;
+  color: #999
+}
+
+.btn-eslred {
+  color: #fff;
+  background-color: #E45320;
+  border-color: #d43f3a;
+}
+.btn-eslred:hover,
+.btn-eslred:focus,
+.btn-eslred.focus,
+.btn-eslred:active,
+.btn-eslred.active,
+.open > .dropdown-toggle.btn-eslred {
+  color: #fff;
+  background-color: #bd3720;
+  border-color: #ac2925;
+}
+
+/* searchresult */
+.listitem {
+  padding: 1em 0;
+  border-bottom: solid 1px #d8d8d8;
+}
+.listitem a{
+  color: #999;
+  font-size: 0.8em;
+  display: block;
+  widows: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.listitem a:hover,a:active{
+  color: #666;
+  text-decoration: underline;
+}
+.pagination>li>a{
+  background: #f5f5f5 ;
+  color: #823E00;
+}
+
+.pagination .disabled a{
+  background: #f5f5f5 ;
+}
+.pagination .disabled a:hover{
+  background: #f5f5f5 ;
+  cursor: default;
+}
+
+.panel {
+  border-radius: 0;
+  clear: both;
+}
+
+.panel-body {
+  background:#f5f5f5;
+}
+
+.panel ul{
+  list-style-type: none;
+  width: 100%;
+  float: left;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.panel ul li{
+  cursor: pointer;
+  color:#823E00;
+}
+.panel ul li :hover{
+  color: #F15A24;
+}
+.panel ul li[status='selected']{
+  cursor: default;
+  color:black;
+}
+.panel ul li[status='selected'] :hover{
+  color:black;
+}
+
+.panel ul.pager {
+  margin: 0;
+}
+
+/* sign up*/
+.nav-tabs {
+  height: 42px;
+  width: 840px;
+}
+.nav-tabs li{
+  height: 42px;
+  width: 280px;
+}
+.nav-tabs>li.active>a, 
+.nav-tabs>li.active>a:focus,
+.nav-tabs>li.active>a:hover{
+  background: #f5f5f5;
+}
+.nav-tabs>li.disabled>a{
+  background: #eee;
+}
+.chooseconference {
+  margin-top: 30px;
+}
+.chooseconference .panel{
+  border: 0;
+  box-shadow: none;
+}
+.chooseconference .panel-heading{
+  background: #eee;
+  text-align: center;
+}
+.chooseconference .panel-heading a,a:hover,a:active{
+  color: #000;
+  text-decoration: none;
+}
+.chooseconference .panel-body {
+  background: #f5f5f5;
+  border-top: 0;
+}
+.moreconference fieldset{
+  width: 100%;
+  clear: both;
+}
+
+/* my dashboard */
+.sidebar01 td {
+  text-align: left;
+  background: #f5f5f5;
+}
+.sidebar01 td a{
+  color: #000;
+  margin-left: 10px;
+}
+.sidebar01 td a.actived{
+  color: #F15A24;
+  font-weight: bold;
+}
+.corpuslist {
+  clear: both;
+}
+.panel-heading {
+  background: #eee !important;
+}
+.corpusdescription {
+  margin-top: -16px;
+  word-break: break-word;
+}
+thead tr td{
+  height: 10px;
+  background: #eee;
+}
+tbody {
+  border-bottom: solid 1px #ddd;
+}
+.breadcrumb {
+  clear: both;
+  border-radius: 0;
+  margin-bottom: 0;
+  padding: 8px 2px;
+}
+
+.ui-autocomplete{width:100%; background:#FFF; border:#AA9688 solid 1px; font-size:21px; box-shadow:0 2px 8px rgba(0,0,0,.24); z-index: 10}
+.ui-menu-item{color:#512B1C; border-bottom:#E1E0DE solid 1px; font-size:14px; overflow:hidden;}
+.ui-menu-item:last-child{border:none;}
+.ui-menu-item a{display:block; clear:both; float:left;box-sizing:border-box; padding:8px 16px; width:100%; cursor:pointer;}
+.ui-menu-item a:hover{background:#F3F3F3;}
+.ui-menu-item .suggestWord{float:left; margin-top:2px; width:38%;}
+.ui-menu-item .exampleSentence{float:right; margin-top:4px; width:60%; font-size:12px; text-align:right;}
+.smallBar .ui-menu-item .exampleSentence{float:left; clear:both; width:96%; text-align:left;}
+.ui-helper-hidden-accessible{border: 0; clip:rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;}
+.ui-menu .ui-menu-item a.ui-state-focus,
+.ui-menu .ui-menu-item a.ui-state-active {
+  //font-weight: normal;
+  //margin: -1px -1px -1px -1px;
+}
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus {
+  //border: 0px solid #f5ad66;
+  background: #f5f0e5;
+  //font-weight: bold;
+  color: #a46313;
+}
+.ui-state-hover a,
+.ui-state-hover a:hover,
+.ui-state-hover a:link,
+.ui-state-hover a:visited,
+.ui-state-focus a,
+.ui-state-focus a:hover,
+.ui-state-focus a:link,
+.ui-state-focus a:visited {
+  color: #a46313;
+  text-decoration: none;
+}
+
+.result-head{
+  color: #A1A1A1;
+  font-size:18px;
+}
+
+.result-sentence{
+  font-family: "Arial";
+  font-weight: 400;
+  color: #333;
+  word-wrap: break-word;
+  font-size: 14px;
+}
+
+.page-nav-container{
+  text-align: center;
+}
+
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.errorlist {
+    color: #b94a48;
+    margin-top: 10px;
+}
+
+.validation-summary-errors{
+  color: #b94a48;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.normal-font-family{
+  font-family: Arial
+}
+.qq-upload-list li{
+    margin-top: 5px;
+    border-radius: 5px;
+}
+.qq-progress-bar{
+  background-color: #5cb85c;
+  background-image:linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+}
+
+.source_text_overflow{
+  white-space:nowrap; 
+  text-overflow:ellipsis;
+  -o-text-overflow:ellipsis; 
+  overflow:hidden;
+}

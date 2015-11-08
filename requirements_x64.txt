@@ -1,0 +1,13 @@
+django
+django-registration-redux
+# http://pi.cs.tsinghua.edu.cn/pyodbc-3.0.7-cp27-none-win32.whl
+# http://pi.cs.tsinghua.edu.cn/pyodbc-3.0.7-cp27-none-win_amd64.whl
+# django-pyodbc-azure
+# azure
+# http://pi.cs.tsinghua.edu.cn/pythonnet-2.0.0.dev1-cp27-none-win32.whl
+# http://pi.cs.tsinghua.edu.cn/pythonnet-2.0.0.dev1-cp27-none-win_amd64.whl
+PyPDF2
+nltk
+pymongo
+requests
+django-celery

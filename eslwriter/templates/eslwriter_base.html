@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+    
+{% block resource %}
+{% load static %}
+<!--css for search bar in main page-->
+<!--<link rel="stylesheet" type="text/css" href="{% static 'eslwriter/css/style.css' %}">-->
+<script type="text/javascript" src="{% static 'eslwriter/js/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'eslwriter/js/eslwriter-init.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    if($('#SearchInput').length>0){
+        setupAutoComplete('{% url "dep" %}', '#SearchInput', '#SuggestionContainer');
+        $('#SearchInput').focus();
+    }
+    else if($('#NavSearchInput').length>0){
+        setupAutoComplete('{% url "dep" %}', '#NavSearchInput', '#SuggestionContainer');
+        $('#NavSearchInput').focus();
+    }
+});
+
+</script>
+
+{% block eslwriter_resource %}{% endblock %}
+{% endblock %}

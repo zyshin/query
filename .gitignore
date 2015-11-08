@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 
+
 # C extensions
 *.so
 
@@ -55,3 +56,45 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# PTVS analysis
+.ptvs/
+
+# Build results
+/bin/
+/obj/
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Auto-generated virtual environment
+/env/
+
+# Auto-generated web.config
+/web.config
+
+# Auto-collected static files folder
+/static/
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Mac desktop service store files
+.DS_Store
+
+# For ESL project
+/.svn/
+/env/
+/legacy/
+/media/
+/data/
+db.*

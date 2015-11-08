@@ -1,0 +1,264 @@
+{% extends "eslwriter_base.html" %}
+{% load i18n %}
+
+{% block title %}ESLWriter{% endblock %}
+
+{% block eslwriter_resource %}
+{% load static %}
+<style type="text/css">
+.pagination li{
+	cursor: pointer;
+}
+.pagination .disabled,.active{
+	cursor: default;
+}
+</style>
+{% if pub_gr or pri_gr %}
+<script type="text/javascript">
+var USAGE_INFO={'selected_usage': ['#pub-data-container','-1']};
+$(document).ready(function(){
+	{% for item in pub_gr %}
+		var q = {qs: '{{item.qs|safe}}', csrfmiddlewaretoken: '{{ csrf_token }}'};
+		$("#pub-data-container li[item-index='{{forloop.counter}}']")[0].q = q;
+	{% endfor %}
+	$("#pub-data-container li").click(function(){
+		$('div#QueryResult').html('<div class="ExampleList"><h2><small>Loading ...</small></h2></div>');
+		$(USAGE_INFO['selected_usage'][0]+" li[item-index='"+USAGE_INFO['selected_usage'][1]+"']").attr('status','');
+		$(this).attr('status','selected');
+		USAGE_INFO['selected_usage']=['#pub-data-container',$(this).attr('item-index')];
+		if ($(this)[0].sr) {
+			$('div#QueryResult').html($(this)[0].sr);
+		} else {
+			var item = $(this)[0];
+			$('div#QueryResult').load("{% url 'sentence' %}?", $(this)[0].q, function(r){
+				item.sr = r;
+			});
+		}
+	});
+	{% for item in pri_gr %}
+		var q = {qs: '{{item.qs|safe}}', csrfmiddlewaretoken: '{{ csrf_token }}'};
+		$("#pri-data-container li[item-index='{{forloop.counter}}']")[0].q = q;
+	{% endfor %}
+	$('#pri-data-container li').click(function(){
+		$('div#QueryResult').html('<div class="ExampleList"><h2><small>Loading ...</small></h2></div>');
+		$(USAGE_INFO['selected_usage'][0]+" li[item-index='"+USAGE_INFO['selected_usage'][1]+"']").attr('status','');
+		$(this).attr('status','selected');
+		USAGE_INFO['selected_usage']=['#pri-data-container',$(this).attr('item-index')];
+		if ($(this)[0].sr) {
+			$('div#QueryResult').html($(this)[0].sr);
+		} else {
+			var item = $(this)[0];
+			$('div#QueryResult').load("{% url 'sentence' %}?", $(this)[0].q, function(r){
+				item.sr = r;
+			});
+		}
+	});
+	
+	//数据部分：每个项目指定item-index属性
+	//导航菜单部分：前进后退按钮page-nav、跳转按钮page-index
+	nav_dic={
+		'pubCorpus':{'data_select':'#pub-data-container [item-index]','nav_container':'#pub-nav-container','pageSize':8,'curPage':1,'totalCount':{{pub_gr|length}},'pageNums':0},
+		'priCorpus':{'data_select':'#pri-data-container [item-index]','nav_container':'#pri-nav-container','pageSize':8,'curPage':1,'totalCount':{{pri_gr|length}},'pageNums':0},
+	};
+	for(var item in nav_dic)
+	{
+		if($(nav_dic[item].data_select).length>0){
+			nav_dic[item].pageNums=parseInt((nav_dic[item].totalCount-1)/nav_dic[item].pageSize)+1;
+			hide_overflow($(nav_dic[item].data_select),nav_dic[item].pageSize,nav_dic[item].totalCount,nav_dic[item].curPage);
+			update_nav_status(nav_dic[item].nav_container,nav_dic[item].pageNums,nav_dic[item].curPage);
+			$(nav_dic[item].nav_container+" [page-nav='pre']").click(function(){
+				if(typeof($(this).attr('nav-key'))=='undefined')
+					return;
+				var item = $(this).attr('nav-key');
+				if(nav_dic[item].curPage>1){
+					nav_dic[item].curPage-=1;
+					hide_overflow($(nav_dic[item].data_select),nav_dic[item].pageSize,nav_dic[item].totalCount,nav_dic[item].curPage);
+					update_nav_status(nav_dic[item].nav_container,nav_dic[item].pageNums,nav_dic[item].curPage);
+				} 
+			});
+			$(nav_dic[item].nav_container+" [page-nav='next']").click(function(){
+				if(typeof($(this).attr('nav-key'))=='undefined')
+					return;
+				var item = $(this).attr('nav-key');
+				if(nav_dic[item].curPage<nav_dic[item].pageNums){
+					nav_dic[item].curPage+=1;
+					hide_overflow($(nav_dic[item].data_select),nav_dic[item].pageSize,nav_dic[item].totalCount,nav_dic[item].curPage);
+					update_nav_status(nav_dic[item].nav_container,nav_dic[item].pageNums,nav_dic[item].curPage);
+				} 
+			});
+		}
+	}
+
+	if ($("#pri-data-container li").length) {
+		$("#pri-data-container li[item-index=1]").click();
+		// USAGE_INFO['selected_usage']=['#pri-data-container','1'];
+	}
+	else {
+		$("#pub-data-container li[item-index=1]").click();
+		// USAGE_INFO['selected_usage']=['#pub-data-container','1'];
+	}
+});
+
+function hide_overflow(jquery_obj_collection,pageSize,totalCount,curPage){
+	if(totalCount>pageSize){
+		$("body").animate({ scrollTop: 0},"fast");
+		showStart=pageSize*(curPage-1)+1;
+		showEnd=pageSize*curPage;
+		jquery_obj_collection.each(function(){
+			if($(this).attr('item-index')<showStart||$(this).attr('item-index')>showEnd){
+				$(this).hide();
+			}
+			else{
+				$(this).show();
+			}
+		});
+	}
+}
+
+function update_nav_status(nav_container_tag,pageNums,curPage){
+	if(pageNums>0){
+		$(nav_container_tag+' [page-index]').each(function(){
+			if($(this).attr('page-index')==curPage){
+				$(this).addClass('active'); 
+			}
+			else{
+				$(this).removeClass('active');
+			}
+		});
+		if(pageNums==curPage){
+			$(nav_container_tag+" [page-nav='next']").addClass('disabled');
+		}
+		else
+		{
+			$(nav_container_tag+" [page-nav='next']").removeClass('disabled');
+		}
+		if(curPage==1){
+			$(nav_container_tag+" [page-nav='pre']").addClass('disabled');
+		}
+		else
+		{
+			$(nav_container_tag+" [page-nav='pre']").removeClass('disabled');
+		}
+	}
+}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block function_div %}
+<form style="position: absolute; left:250px" action="{% url 'eslwriter' %}" method="GET" onsubmit="return true;">
+	<div class="input-group navbar-form navbar-left">
+		<div style="width: 400px">
+			<input id="fake_input" style="position:absolute; top:-100px; display:none;" type="text" value="">
+			<input id="NavSearchInput" type="text" class="form-control" placeholder="Search" name="q" value="{{ q }}" autocomplete="off">
+			<div id="SuggestionContainer" style="clear: left"></div>
+		</div>
+		<button class="btn btn-default" type="submit" style="position:absolute;top:0px;right:-40px;border-radius: 0px 4px 4px 0px"><span class="glyphicon glyphicon-search"></span></button>
+	</div>
+</form>
+{% endblock %}
+
+{% block content %}
+	{% if pri_gr or pub_gr %}
+	<div class="main">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-3" style="margin-top: 30px; padding-left: 0;">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">{% trans 'Personal Corpus' %}: {{ profile.pri_corpus.name }}</h3>
+						</div>
+						<div class="panel-body">
+							{% if not user.is_authenticated %}
+								<div style="height:40px; text-align: center"> 
+									<a href="{% url 'auth_login' %}" style="line-height: 40px;" class="btn-link">{% trans 'Sign In' %}</a>
+								</div>
+							{% elif not profile.pri_corpus %}
+								<div style="height:40px; text-align: center">
+									<a href="{% url 'profile' %}" style="line-height: 40px;" class="btn-link">{% trans 'Create Personal Corpus' %}</a>
+								</div>
+							{% else %}
+								<ul id="pri-data-container">
+								{% if pri_gr %}
+									<p><i>{{ pri_gr|length }} usages</i></p>
+								{% else %}
+									<p><i>No results</i></p>
+								{%endif%}
+								{% for item in pri_gr %}
+									<li item-index="{{forloop.counter}}">
+										<span class="number" style="float: right">({{ item.c }})</span>
+										<p class="textOverflow">{{ item.s }}</p>
+									</li>
+								{% endfor %}
+								</ul>
+								<nav>
+									<ul class="pager" id="pri-nav-container">
+										<li class="previous" page-nav="pre" nav-key="priCorpus"><a class="glyphicon glyphicon-menu-left" href="#"></a></li>
+										<li class="next" page-nav="next" nav-key="priCorpus"><a class="glyphicon glyphicon-menu-right" href="#"></a></li>
+									</ul>
+								</nav>
+							{% endif %}
+						</div>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">{{ profile.field }}</h3>
+						</div>
+						<div class="panel-body">
+							<ul id="pub-data-container">
+							{% if pub_gr %}
+								<p><i>{{ pub_gr|length }} usages</i></p>
+							{% else %}
+								<p><i>No results</i></p>
+							{%endif%}
+							{% for item in pub_gr %}
+								<li item-index="{{ forloop.counter }}">
+									<span class="number" style="float:right">({{ item.c }})</span>
+									<p{% comment %} class="textOverflow"{% endcomment %}>{{ item.s }}</p>
+								</li>
+							{% endfor %}
+							</ul>
+							<nav>
+								<ul class="pager" id="pub-nav-container">
+									<li class="previous" page-nav="pre" nav-key="pubCorpus"><a class="glyphicon glyphicon-menu-left" href="#"></a></li>
+									<li class="next" page-nav="next" nav-key="pubCorpus"><a class="glyphicon glyphicon-menu-right" href="#"></a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-9" id="QueryResult">{% comment %}{% include 'eslwriter/sentence_result.html' %}{% endcomment %}</div>
+			</div>
+		</div>
+	</div>
+	{% else %}
+		<div class="container">
+			<div style="text-align: center; padding-top: 200px; padding-bottom: 200px;">
+				<h4>{% trans 'Sorry, no results found for' %} "{{ q }}".</h4>
+				<br>
+				<h4>{% trans 'Please check your keywords' %}.</h4>
+				{% comment %}
+				<span>抱歉，在选定语料库中没有找到与您查询的"{{ q }}"相符的内容。</span>
+				<br><br><br>
+				<span>请查看输入的字词是否有错误并重新输入。</span>
+				{% endcomment %}
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block footer %}
+{% comment %}
+<script type="text/javascript" src="http://dict.bing.com.cn/cloudwidget/Scripts/Generated/BingTranslate_Hover_Phrase_Selection.js"></script>
+<script type="text/javascript">
+BingCW.Init({
+   AppID:"http://tu139042.ip.tsinghua.edu.cn:8000/",
+   ContentArea:"ExampleList",
+   MachineTranslation:true,
+   WebDefinition:true
+})</script>
+
+<div id="YOUDAO_SELECTOR_WRAPPER" bindTo="SentenceList" style="display:none; margin:0; border:0; padding:0; width:320px; height:240px;"></div>
+<script type="text/javascript" src="http://fanyi.youdao.com/openapi.do?keyfrom=ESLWriter&key=205873295&type=selector&version=1.2&translate=on" charset="utf-8"></script>
+{% endcomment %}
+{% endblock %}
