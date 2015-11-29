@@ -1,5 +1,5 @@
 # Query Project
-A fork of the ESLWriter project to enhance query interface.
+A fork of the ESLWriter project to enhance result presentation by visualization.
 
 ## Setup
 * Install dependencies
@@ -19,4 +19,5 @@ python manage_debug.py runserver
 ```
 
 ## Next Step
-Modify `eslwriter/views.py`, where is marked by `# TODO: ---- add your code here ----`.
+Modify `eslwriter/views.py`, where is marked by `# TODO: ---- add r['m'] to vis_data ----`.
+Modify `eslwriter/templates/eslwriter/sentence_result.html` to show visualization of vis_data
