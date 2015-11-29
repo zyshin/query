@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import requests
 
 
@@ -8,7 +10,7 @@ def is_cn_char(c):
 def is_cn(s):
     return reduce(lambda x,y: x and y, [is_cn_char(c) for c in s], True)
 
-
+# TODO: Bugs here, youdao returns not perfect English, for example: 搜索
 def translate(cn):
     url = u'http://fanyi.youdao.com/openapi.do?keyfrom=ESLWriter&key=205873295&type=data&doctype=json&version=1.2&only=dict&q=' + cn
     l = ['no translation found!']
