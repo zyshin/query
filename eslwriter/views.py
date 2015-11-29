@@ -61,8 +61,8 @@ def dep_query_view(request):
 	if not q or error != 0:
 		return render(request, 'eslwriter/index.html', {'error': error})
 	
-	# qtt, qdd = parse_query_str(q)
-	# qlen = len(qtt)
+	qtt, qdd = parse_query_str(q)
+	qlen = len(qtt)
 
 	profile = mongo_get_object(UserProfile, pk=request.user.pk)
 	pri_cids, pub_cids = _get_cids(profile)
