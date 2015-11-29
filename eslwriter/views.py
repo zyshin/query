@@ -68,24 +68,22 @@ def dep_query_view(request):
 	pri_cids, pub_cids = _get_cids(profile)
 	cids = pub_cids + pri_cids
 	
-	# gr = []
-	# if (qlen == 1 or qlen == 2) and cids:
-	# 	tt = [t.strip('?') for t in qtt[:2]]
-	# 	tt = [translate(t)[0] if is_cn(t) else t for t in tt]
-	# 	tt = [lemmatize(t) for t in tt]
-	# 	llii = tt2ii(tt)
+	gr = []
+	if (qlen == 1 or qlen == 2) and cids:
+		tt = [t.strip('?') for t in qtt[:2]]
+		tt = [translate(t)[0] if is_cn(t) else t for t in tt]
+		tt = [lemmatize(t) for t in tt]
+		llii = tt2ii(tt)
 		
-	# 	l1 = llii[0]
-	# 	if qlen == 1:
-	# 		qtt.append('*')
-	# 		l2 = 0
-	# 	else:
-	# 		l2 = llii[1]
-	# 	gr = dep_query(l1, l2, cids)
-	# 	gr = [('%s %s %s' % (qtt[i1], i2dt[di], qtt[i2]), cleaned_sentence(ii2tt(wids), highlights)) for i1, i2, di, wids, highlights in gr]
+		l1 = llii[0]
+		if qlen == 1:
+			qtt.append('*')
+			l2 = 0
+		else:
+			l2 = llii[1]
+		gr = dep_query(l1, l2, cids)
+		gr = [('%s %s %s' % (qtt[i1], i2dt[di], qtt[i2]), cleaned_sentence(ii2tt(wids), highlights)) for i1, i2, di, wids, highlights in gr]
 	
-	# TODO: ---- add your code here ----
-	gr = [(q, '', [])] * 4
 	return make_response(content=json.dumps({ 'gr': gr }), content_type='application/json')
 
 
@@ -99,13 +97,13 @@ def sentence_query_view(request):
 	cids = q.get('cids', [])
 	# start = int(request.GET.get('s', '0'))  #sentence start index
 	# count = int(request.GET.get('c', '100'))
-	sr = sentence_query(ii, dd, cids, ref)
+	sr, vis_data = sentence_query(ii, dd, cids, ref)
 	total_page_num = (len(sr) - 1) / 10 + 1
 	if total_page_num > 10 :
 		page_nums_list = [i for i in range(1, 11)]
 	else:
 		page_nums_list = [i for i in range(1, total_page_num + 1)]
-	return render(request, 'eslwriter/sentence_result.html', {'gc': gc, 'sr': sr, 'page_nums_list': page_nums_list})
+	return render(request, 'eslwriter/sentence_result.html', {'gc': gc, 'sr': sr, 'page_nums_list': page_nums_list, 'vis_data': vis_data})
 
 @timeit
 def group_query(iiii, dd, cids, ref):
@@ -143,15 +141,18 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
 	isolated_ll = [ii[i] for i in find_isolated_tokens(ii, dd)]
 	qdd = [(dt, ii[i1], ii[i2]) for dt, i1, i2 in dd]
 	q = format_query(isolated_ll, qdd)
-	sr = []
+	sr, vis_data = [], []
 	if not q:
-		return sr
+		return sr, vis_data
 	dbc = settings.DBC
 	n = 0
 	for cid in cids:
 		_sr = list(dbc.sentences[str(cid)].find(q, {'_id': 0, 't.p': 0}, limit=settings.MAX_RESULT_LENGTH))
 		for r in _sr:
 			r['m'], r['c'] = find_best_match(r, ii, dd, ref)
+			# TODO: ---- add r['m'] to vis_data ----
+			sentence_length = len(r['t'])
+
 		# _sr = [r for r in _sr if r['c'] < sys.maxint] #filter out critical unmatch results
 		_sr.sort(key=itemgetter('c'))
 		_sr = _sr[:count]
@@ -161,7 +162,7 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
 			break
 	sr.sort(key=itemgetter('c'))
 	sr = [(paper_source_str(r['p']), cleaned_sentence(ii2tt([t['w'] for t in r['t']]), r['m'])) for r in sr[:count]]
-	return sr
+	return sr, vis_data
 
 
 def dep_query(l1, l2, cids):
