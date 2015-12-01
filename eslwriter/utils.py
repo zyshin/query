@@ -200,13 +200,16 @@ def check_query_str(q):
 # TODO: use NLTK to split tokens
 # TODO: Chinese word split
 def parse_query_str(q):
-    tokens = q.split()
-    lent = len(tokens)
+    token = q.split()
+    # print "tokens = ", token
+    lent = len(token)
+    # print "lent = ", lent
     qtt, qdd = [], []
     for i in xrange(lent):
-        t_1 = tokens[i-1] if i > 0 else None
-        t = tokens[i]
-        t1 = tokens[i+1] if i < lent-1 else None
+        # print "i = ", i
+        t_1 = token[i - 1] if i > 0 else None
+        t = token[i]
+        t1 = token[i + 1] if i < lent - 1 else None
         if t in dt2i:
             if t_1 in dt2i or t1 in dt2i:
                 return qtt, qdd
@@ -300,3 +303,42 @@ def paper_source_str(pid):
             source += authorShort
         source += title
     return {'source': source, 'url': p['url']}
+
+
+def distribution_statistic(distribution, precision=0.001):
+    keyword_total = len(distribution)
+    sorted_distribution = [[[], []] for x in range(keyword_total)]
+    for x in range(len(distribution)):
+        for i in range(2):
+            sorted_distribution[x][i] = sorted(distribution[x][i])
+    y_array = [[0 for i in range(int(1 / precision + 0.001))] for x in range(keyword_total)]
+    for x in range(keyword_total):
+        current = 0
+        first_index = 0
+        second_index = 0
+        total = 0
+        minus = 0
+        length = len(sorted_distribution[x][0])
+        print len(sorted_distribution[x][0]), len(sorted_distribution[x][1])
+        while current * precision < 1.0 and first_index < length:
+            if sorted_distribution[x][0][first_index] < current * precision:
+                total += 1
+                first_index += 1
+            else:
+                y_array[x][current] = total
+                current += 1
+        while current * precision < 1.0:
+            y_array[x][current] = total
+            current += 1
+        current = 0
+        while current * precision < 1.0 and second_index < length:
+            if sorted_distribution[x][1][second_index] < current * precision:
+                minus += 1
+                second_index += 1
+            else:
+                y_array[x][current] -= minus
+                current += 1
+        while current * precision < 1.0:
+            y_array[x][current] -= minus
+            current += 1
+    return y_array

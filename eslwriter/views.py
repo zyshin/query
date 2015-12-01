@@ -89,6 +89,7 @@ def dep_query_view(request):
 
 @timeit
 def sentence_query_view(request):
+    # print "request = ",  request
     q = json.loads(request.POST.get('qs', '{}'))
     gc = q.get('gc', 0)
     ii = q.get('ii', [])
@@ -97,13 +98,22 @@ def sentence_query_view(request):
     cids = q.get('cids', [])
     # start = int(request.GET.get('s', '0'))  #sentence start index
     # count = int(request.GET.get('c', '100'))
-    sr, vis_data = sentence_query(ii, dd, cids, ref)
+    keywords = ["first", "second", "third", "forth", "fifth"]
+    sr, vis_data, y_range = sentence_query(ii, dd, cids, ref)
+    # print "ii = ", ii
+    # print "dd = ", dd
+    # print "cids = ", cids
+    # print "ref = ", ref
+    # print "gc = ", gc
+    # print "sr = ", sr
     total_page_num = (len(sr) - 1) / 10 + 1
     if total_page_num > 10 :
         page_nums_list = [i for i in range(1, 11)]
     else:
         page_nums_list = [i for i in range(1, total_page_num + 1)]
-    return render(request, 'eslwriter/sentence_result.html', {'gc': gc, 'sr': sr, 'page_nums_list': page_nums_list, 'vis_data': vis_data})
+    return render(request, 'eslwriter/sentence_result.html',
+                  {'gc': gc, 'sr': sr, 'page_nums_list': page_nums_list, 'vis_data': vis_data,
+                   "y_range": y_range, "keywords": keywords})
 
 @timeit
 def group_query(iiii, dd, cids, ref):
@@ -142,18 +152,29 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
     isolated_ll = [ii[i] for i in find_isolated_tokens(ii, dd)]
     qdd = [(dt, ii[i1], ii[i2]) for dt, i1, i2 in dd]
     q = format_query(isolated_ll, qdd)
-    sr, vis_data = [], []
+    sr = []
+    keyword_total = len(isolated_ll)
+    precision = 0.001
+    vis_data = [[0,1,2,3,4,5,6,7,8,9,10],
+                [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
+    y_range = 1
     if not q:
-        return sr, vis_data
+        return sr, vis_data, y_range
     dbc = settings.DBC
     n = 0
+    distribution = [[[], []] for x in range(keyword_total)]
     for cid in cids:
         _sr = list(dbc.sentences[str(cid)].find(q, {'_id': 0, 't.p': 0}, limit=settings.MAX_RESULT_LENGTH))
         for r in _sr:
             r['m'], r['c'] = find_best_match(r, ii, dd, ref)
-            # TODO: ---- add r['m'] to vis_data ----
-            sentence_length = len(r['t'])
+            sentence_length = float(len(r['t']))
+            position_tuple = r['m']
+            position_delta = 1.0 / sentence_length
 
+            # print "r['m'] = ", r['m']
+            for x in range(keyword_total):
+                distribution[x][0].append(position_tuple[x] / sentence_length)
+                distribution[x][1].append(position_tuple[x] / sentence_length + position_delta)
         # _sr = [r for r in _sr if r['c'] < sys.maxint] #filter out critical unmatch results
         _sr.sort(key=itemgetter('c'))
         _sr = _sr[:count]
@@ -163,7 +184,11 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
             break
     sr.sort(key=itemgetter('c'))
     sr = [(paper_source_str(r['p']), cleaned_sentence(ii2tt([t['w'] for t in r['t']]), r['m'])) for r in sr[:count]]
-    return sr, vis_data
+    vis_data = distribution_statistic(distribution)
+    for data in vis_data:
+        new_max = max(data)
+        y_range = new_max if new_max > y_range else y_range
+    return sr, vis_data, y_range * 1.3
 
 
 def dep_query(l1, l2, cids):

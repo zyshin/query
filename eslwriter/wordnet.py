@@ -1,7 +1,9 @@
 from nltk.corpus import wordnet as WN
 
 
-EXCEPT = {'her': 'she', 'him': 'he', 'his': 'he', 'its': 'its', 'me': 'I', 'others': 'other', 'our': 'we', 'their': 'they', 'them': 'they', 'us': 'we', 'your': 'you', 'yourselves': 'yourselve'}
+EXCEPT = {'her': 'she', 'him': 'he', 'his': 'he', 'its': 'its', 'me': 'I',
+          'others': 'other', 'our': 'we', 'their': 'they', 'them': 'they', 'us': 'we',
+          'your': 'you', 'yourselves': 'yourself'}
 
 
 def lemmatize(s):

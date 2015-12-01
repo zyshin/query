@@ -1,5 +1,91 @@
-<div class="ExampleList">
-    <div>{{ vis_data }}</div>
+
+<div class="ExampleList", id="ResultList">
+    <div id="graph" class="aGraph"></div>
+    {% load staticfiles %}
+    <script type="text/javascript" src="{% static 'eslwriter/js/d3legend.js' %}"></script>
+    <script>
+
+    /* implementation heavily influenced by http://bl.ocks.org/1166403 */
+
+    // define dimensions of graph
+    var m = [20, 20, 20, 80]; // margins
+    var w = document.getElementById("ResultList").offsetWidth - m[1] - m[3]; // width
+    var h = 300 - m[0] - m[2]; // height
+
+    // create a simple data array that we'll plot with a line (this array represents only the Y values, X will just be the index location)
+{#    {% for array in vis_data %}#}
+{#    {% endfor %}#}
+    // X scale will fit all values from data[] within pixels 0-w
+    var x = d3.scale.linear().domain([0, 1]).range([0, w]);
+    // Y scale will fit values from 0-10 within pixels h-0 (Note the inverted domain for the y-scale: bigger is up!)
+    var y = d3.scale.linear().domain([0, {{ y_range }}]).range([h, 0]);
+        // automatically determining max range can work something like this
+        // var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
+    // create a line function that can convert data[] into x and y points
+    var line = d3.svg.line()
+        // assign the X function to plot our line as we wish
+        .x(function(d,i) {
+            // verbose logging to show what's actually being done
+{#            console.log('Plotting X value for data point: ' + d + ' using index: ' + i + ' to be at: ' + x(i) + ' using our xScale.');#}
+            // return the X coordinate where we want to plot this datapoint
+            return x(i) / (data.length - 1);
+        })
+        .y(function(d) {
+            // verbose logging to show what's actually being done
+{#            console.log('Plotting Y value for data point: ' + d + ' to be at: ' + y(d) + " using our yScale.");#}
+            // return the Y coordinate where we want to plot this datapoint
+            return y(d);
+        }).interpolate("basis");
+        // Add an SVG element with the desired dimensions and margin.
+        var graph = d3.select("#graph").append("svg:svg")
+              .attr("width", w + m[1] + m[3])
+              .attr("height", h + m[0] + m[2])
+            .append("svg:g")
+              .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+        // create yAxis
+        var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true);
+        // Add the x-axis.
+        graph.append("svg:g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0," + h + ")")
+              .call(xAxis);
+        // create left yAxis
+        var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
+        // Add the y-axis to the left
+        graph.append("svg:g")
+              .attr("class", "y axis")
+              .attr("transform", "translate(-25,0)")
+              .call(yAxisLeft);
+
+
+
+        // Add the line by appending an svg:path element with the data line we created above
+        // do this AFTER the axes above so that the line is above the tick-lines
+        var color = ["blue", "red", "green", "yellow"];
+    var keywords = [];
+    {% for word in keywords %}
+    keywords.push("{{ word }}");
+    {% endfor %}
+        var color_index = 0;
+        {% for data in vis_data %}
+            var data = {{ data }};
+            graph.append("svg:path")
+                    .attr("d", line(data))
+                    .attr('stroke', color[color_index])
+                    .attr('stroke-width', 2)
+                    .attr('fill', 'none')
+                    .attr("data-legend",function(d) { return keywords[color_index]});
+            color_index += 1;
+        {% endfor %}
+
+         legend = graph.append("svg:g")
+                    .attr("class","legend")
+                    .attr("transform","translate(50,30)")
+                    .style("font-size","20px")
+{#                    .attr('fill', 'none')#}
+                    .style("font-color", "white")
+                    .call(d3.legend);
+    </script>
 	<h2><small id="currentShowResult">1-10</small><small> of </small><small id="totalResult" class="number">{{ gc }}</small></h2>
 	<ul id="SentenceList" class="resultlist">
 	{% for p, sentence in sr %}
@@ -33,9 +119,8 @@ $('div.ExampleList').ready(function (){
          $("#currentShowResult").text(String((nav_dic[item].curPage-1)*10+1)+'-'+ Math.min(nav_dic[item].curPage*10,nav_dic[item].totalCount));
         hide_overflow($(nav_dic[item].data_select),nav_dic[item].pageSize,nav_dic[item].totalCount,nav_dic[item].curPage);
         update_nav_status(nav_dic[item].nav_container,nav_dic[item].pageNums,nav_dic[item].curPage);
-        $(nav_dic[item].nav_container+' [page-index]').click(function(){
-            if(typeof($(this).attr('nav-key'))=='undefined')
-            {
+        $(nav_dic[item].nav_container+' [page-index]').click(function() {
+            if(typeof($(this).attr('nav-key'))=='undefined') {
                 return;
             }
             var item = $(this).attr('nav-key');
@@ -46,9 +131,8 @@ $('div.ExampleList').ready(function (){
                 $("#currentShowResult").text(String((nav_dic[item].curPage-1)*10+1)+'-'+ Math.min(nav_dic[item].curPage*10,nav_dic[item].totalCount));
             }
         });
-        $(nav_dic[item].nav_container+" [page-nav='pre']").click(function(){
-            if(typeof($(this).attr('nav-key'))=='undefined')
-            {
+        $(nav_dic[item].nav_container+" [page-nav='pre']").click(function() {
+            if(typeof($(this).attr('nav-key'))=='undefined') {
                 return;
             }
             var item = $(this).attr('nav-key');
@@ -59,9 +143,8 @@ $('div.ExampleList').ready(function (){
                 $("#currentShowResult").text(String((nav_dic[item].curPage-1)*10+1)+'-'+ Math.min(nav_dic[item].curPage*10,nav_dic[item].totalCount));
             } 
         });
-        $(nav_dic[item].nav_container+" [page-nav='next']").click(function(){
-            if(typeof($(this).attr('nav-key'))=='undefined')
-            {
+        $(nav_dic[item].nav_container+" [page-nav='next']").click(function() {
+            if(typeof($(this).attr('nav-key'))=='undefined') {
                 return;
             }
             var item = $(this).attr('nav-key');

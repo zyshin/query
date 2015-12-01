@@ -19,6 +19,25 @@
 		$(".fixed-form select").css("width","auto");
 	});
 	</script>
+    <script src="{% static 'common/js/d3.v3.min.js' %}"></script>
+		<style>
+			.axis {
+			  shape-rendering: crispEdges;
+			}
+			.x.axis line {
+			  stroke: lightgrey;
+			}
+			.x.axis .minor {
+			  stroke-opacity: .5;
+			}
+			.x.axis path {
+			  display: none;
+			}
+			.y.axis line, .y.axis path {
+			  fill: none;
+			  stroke: #000;
+			}
+		</style>
 	{% block resource %}{% endblock %}
 </head>
 
