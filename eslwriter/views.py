@@ -99,7 +99,6 @@ def sentence_query_view(request):
     # start = int(request.GET.get('s', '0'))  #sentence start index
     # count = int(request.GET.get('c', '100'))
     sr, vis_dict = sentence_query(ii, dd, cids, ref)
-    print vis_dict
     total_page_num = (len(sr) - 1) / 10 + 1
     if total_page_num > 10 :
         page_nums_list = [i for i in range(1, 11)]
