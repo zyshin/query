@@ -99,12 +99,7 @@ def sentence_query_view(request):
     # start = int(request.GET.get('s', '0'))  #sentence start index
     # count = int(request.GET.get('c', '100'))
     sr, vis_dict = sentence_query(ii, dd, cids, ref)
-    # print "ii = ", ii
-    # print "dd = ", dd
-    # print "cids = ", cids
-    # print "ref = ", ref
-    # print "gc = ", gc
-    # print "sr = ", sr
+    print vis_dict
     total_page_num = (len(sr) - 1) / 10 + 1
     if total_page_num > 10 :
         page_nums_list = [i for i in range(1, 11)]
@@ -176,7 +171,7 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
     qdd = [(dt, ii[i1], ii[i2]) for dt, i1, i2 in dd]
     q = format_query(isolated_ll, qdd)
     sr = []
-    keyword_total = len(isolated_ll)
+    keyword_total = len(ii)
     precision = 0.005
     color_step = 1.0 / 256
     vis_dict = dict()
@@ -199,7 +194,6 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
             sentence_length = float(len(r['t']))
             position_tuple = r['m']
             position_delta = 1.0 / sentence_length
-
             # print "r['m'] = ", r['m']
             for x in range(keyword_total):
                 distribution[x][0].append(position_tuple[x] / sentence_length)
