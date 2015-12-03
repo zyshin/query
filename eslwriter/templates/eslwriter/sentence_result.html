@@ -9,7 +9,7 @@
 
     // define dimensions of graph
     var m = [20, 20, 20, 80]; // margins
-    var w = document.getElementById("ResultList").offsetWidth - m[1] - m[3]; // width
+    var w = document.getElementById("ResultList").clientWidth - m[1] - m[3]; // width
     var h = 300 - m[0] - m[2]; // height
 
     // create a simple data array that we'll plot with a line (this array represents only the Y values, X will just be the index location)
@@ -18,7 +18,7 @@
     // X scale will fit all values from data[] within pixels 0-w
     var x = d3.scale.linear().domain([0, 1]).range([0, w]);
     // Y scale will fit values from 0-10 within pixels h-0 (Note the inverted domain for the y-scale: bigger is up!)
-    var y = d3.scale.linear().domain([0, {{ y_range }}]).range([h, 0]);
+    var y = d3.scale.linear().domain([0, {{ vis_dict.y_range }}]).range([h, 0]);
         // automatically determining max range can work something like this
         // var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
     // create a line function that can convert data[] into x and y points
@@ -63,11 +63,11 @@
         // do this AFTER the axes above so that the line is above the tick-lines
         var color = ["blue", "red", "green", "yellow"];
     var keywords = [];
-    {% for word in keywords %}
+    {% for word in vis_dict.keywords %}
     keywords.push("{{ word }}");
     {% endfor %}
         var color_index = 0;
-        {% for data in vis_data %}
+        {% for data in vis_dict.vis_data %}
             var data = {{ data }};
             graph.append("svg:path")
                     .attr("d", line(data))
@@ -86,6 +86,41 @@
                     .style("font-color", "white")
                     .call(d3.legend);
     </script>
+
+        {% for word in vis_dict.keywords %}
+        <table>
+            <tr>
+                <th width="80" align="center">{{ word }}</th>
+                <th><canvas width="936" height="1" ></canvas></th>
+            </tr>
+        </table>
+        {% endfor %}
+    <script>
+        var color_data = [];
+        {% for data in vis_dict.color_data %}
+            color_data.push({{ data }});
+        {% endfor %}
+        var index = 0;
+
+        [].forEach.call(document.querySelectorAll("canvas"), function(canvas) {
+            var div_width = document.getElementById("ResultList").clientWidth - 100;
+            canvas.style.width = div_width.toString() + "px";
+            var width = canvas.width;
+            var context = canvas.getContext("2d");
+            var image = context.createImageData(width, 1);
+            var length = color_data[index].length
+            for (var i = 0, j = -1, c, t; i < width; ++i) {
+                c = color_data[index][Math.floor(i / width * length)];
+                image.data[++j] = (c & 0xFF0000) >> 16;
+                image.data[++j] = (c & 0xFF00) >> 8;
+                image.data[++j] = c & 0xFF;
+                image.data[++j] = 255;
+            }
+            context.putImageData(image, 0, 0);
+            index += 1;
+        })
+    </script>
+
 	<h2><small id="currentShowResult">1-10</small><small> of </small><small id="totalResult" class="number">{{ gc }}</small></h2>
 	<ul id="SentenceList" class="resultlist">
 	{% for p, sentence in sr %}

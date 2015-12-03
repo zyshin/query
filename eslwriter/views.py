@@ -98,8 +98,7 @@ def sentence_query_view(request):
     cids = q.get('cids', [])
     # start = int(request.GET.get('s', '0'))  #sentence start index
     # count = int(request.GET.get('c', '100'))
-    keywords = ["first", "second", "third", "forth", "fifth"]
-    sr, vis_data, y_range = sentence_query(ii, dd, cids, ref)
+    sr, vis_dict = sentence_query(ii, dd, cids, ref)
     # print "ii = ", ii
     # print "dd = ", dd
     # print "cids = ", cids
@@ -112,8 +111,7 @@ def sentence_query_view(request):
     else:
         page_nums_list = [i for i in range(1, total_page_num + 1)]
     return render(request, 'eslwriter/sentence_result.html',
-                  {'gc': gc, 'sr': sr, 'page_nums_list': page_nums_list, 'vis_data': vis_data,
-                   "y_range": y_range, "keywords": keywords})
+                  {'gc': gc, 'sr': sr, 'page_nums_list': page_nums_list, 'vis_dict': vis_dict})
 
 @timeit
 def group_query(iiii, dd, cids, ref):
@@ -145,6 +143,31 @@ def group_count_query(q, cids):
     return count
 
 
+color_bank = [854151, 1050504, 1247113, 1443722, 1640076, 1771149, 1902222, 2098831, 2229904, 2360977, 2491793, 2622866,
+              2753939, 2885012, 3016085, 3081622, 3212695, 3343767, 3474584, 3605657, 3671194, 3802266, 3933339, 4064412,
+              4129948, 4261021, 4391838, 4457374, 4588447, 4719519, 4785056, 4916129, 4981409, 5112482, 5243554, 5309091,
+              5440163, 5571236, 5636516, 5767588, 5833125, 5964197, 6029734, 6160806, 6291878, 6357159, 6488231, 6553767,
+              6684839, 6750376, 6881448, 6946984, 7078056, 7209128, 7274664, 7405736, 7471528, 7602600, 7668136, 7799208,
+              7864744, 7996072, 8061608, 8192936, 8258472, 8389800, 8455335, 8586663, 8652199, 8783526, 8849318, 8915110,
+              9046437, 9112229, 9243557, 9309348, 9375140, 9506467, 9572259, 9703586, 9769377, 9835425, 9966752, 10032543,
+              10098335, 10229662, 10295453, 10361245, 10492572, 10558363, 10624410, 10690202, 10821529, 10887320, 10953111,
+              11018902, 11150229, 11216020, 11282068, 11347859, 11413650, 11544977, 11610768, 11676559, 11742350, 11808397,
+              11874188, 11939979, 12005770, 12071561, 12202888, 12268680, 12334471, 12400518, 12466309, 12532100, 12597891,
+              12663682, 12729473, 12795264, 12861055, 12927102, 12992893, 13058684, 13124475, 13190266, 13256058, 13321849,
+              13387640, 13388151, 13453942, 13519733, 13585524, 13651315, 13717106, 13782897, 13848945, 13914736, 13980527,
+              13980782, 14046573, 14112364, 14178155, 14243946, 14309994, 14310249, 14376040, 14441831, 14507622, 14573413,
+              14573924, 14639715, 14705507, 14771298, 14837089, 14837344, 14903391, 14969182, 15034973, 15035229, 15101020,
+              15167067, 15167322, 15233113, 15298904, 15299159, 15365207, 15430998, 15431253, 15497044, 15563091, 15563346,
+              15629137, 15694929, 15695440, 15761231, 15761486, 15827277, 15827788, 15893579, 15959371, 15959882, 16025673,
+              16025928, 16091975, 16092230, 16158021, 16158532, 16224324, 16224579, 16225090, 16290881, 16291136, 16357183,
+              16357438, 16357950, 16423741, 16423996, 16424507, 16490298, 16490809, 16491064, 16556856, 16557367, 16557622,
+              16558133, 16558388, 16624435, 16624691, 16625202, 16625457, 16625968, 16626223, 16626735, 16626990, 16693037,
+              16693292, 16693804, 16694059, 16694570, 16694826, 16695337, 16630313, 16630568, 16631079, 16631335, 16631847,
+              16632358, 16632614, 16567589, 16567845, 16568357, 16568869, 16503588, 16504100, 16504612, 16439332, 16439844,
+              16374820, 16375077, 16310053, 16310565, 16245285, 16245797, 16180774, 16181286, 16116006, 16116519, 16051495,
+              15986215, 15986727, 15921703, 15856678, 15856933, 15791908, 15792417]
+
+
 @timeit
 def sentence_query(ii, dd, cids, ref, start=0, count=100):
     # ref: query token ids in original form and order
@@ -154,12 +177,18 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
     q = format_query(isolated_ll, qdd)
     sr = []
     keyword_total = len(isolated_ll)
-    precision = 0.001
-    vis_data = [[0,1,2,3,4,5,6,7,8,9,10],
-                [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
+    precision = 0.005
+    color_step = 1.0 / 256
+    vis_dict = dict()
+    vis_data = [[] for x in range(keyword_total)]
+    color_data = [[] for x in range(keyword_total)]
     y_range = 1
+    vis_dict["vis_data"] = vis_data
+    vis_dict["y_range"] = y_range
+    vis_dict["color_data"] = color_data
+    vis_dict["keywords"] = ii2tt(ii)
     if not q:
-        return sr, vis_data, y_range
+        return sr, vis_dict
     dbc = settings.DBC
     n = 0
     distribution = [[[], []] for x in range(keyword_total)]
@@ -184,11 +213,18 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
             break
     sr.sort(key=itemgetter('c'))
     sr = [(paper_source_str(r['p']), cleaned_sentence(ii2tt([t['w'] for t in r['t']]), r['m'])) for r in sr[:count]]
-    vis_data = distribution_statistic(distribution)
+    vis_data = distribution_statistic(distribution, precision)
     for data in vis_data:
         new_max = max(data)
         y_range = new_max if new_max > y_range else y_range
-    return sr, vis_data, y_range * 1.3
+    y_range *= 1.1
+    for array_index in range(len(vis_data)):
+        for inside_index in range(len(vis_data[array_index])):
+            color_data[array_index].append(color_bank[int(vis_data[array_index][inside_index] / float(y_range) / color_step)])
+    vis_dict["vis_data"] = vis_data
+    vis_dict["y_range"] = y_range
+    vis_dict["color_data"] = color_data
+    return sr, vis_dict
 
 
 def dep_query(l1, l2, cids):
