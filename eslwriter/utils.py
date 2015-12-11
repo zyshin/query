@@ -310,19 +310,18 @@ def distribution_statistic(distribution, precision=0.001):
     sorted_distribution = [[[], []] for x in range(keyword_total)]
     for x in range(len(distribution)):
         for i in range(2):
-            sorted_distribution[x][i] = sorted(distribution[x][i])
+            sorted_distribution[x][i] = sorted(distribution[x][i], key=lambda pos: pos[0])
     y_array = [[0 for i in range(int(1 / precision + 0.001))] for x in range(keyword_total)]
     for x in range(keyword_total):
         current = 0
         first_index = 0
         second_index = 0
-        total = 0
-        minus = 0
+        total = 0.0
+        minus = 0.0
         length = len(sorted_distribution[x][0])
-        print len(sorted_distribution[x][0]), len(sorted_distribution[x][1])
         while current * precision < 1.0 and first_index < length:
-            if sorted_distribution[x][0][first_index] < current * precision:
-                total += 1
+            if sorted_distribution[x][0][first_index][0] < current * precision:
+                total += sorted_distribution[x][0][first_index][1]
                 first_index += 1
             else:
                 y_array[x][current] = total
@@ -332,8 +331,8 @@ def distribution_statistic(distribution, precision=0.001):
             current += 1
         current = 0
         while current * precision < 1.0 and second_index < length:
-            if sorted_distribution[x][1][second_index] < current * precision:
-                minus += 1
+            if sorted_distribution[x][1][second_index][0] < current * precision:
+                minus += sorted_distribution[x][1][second_index][1]
                 second_index += 1
             else:
                 y_array[x][current] -= minus

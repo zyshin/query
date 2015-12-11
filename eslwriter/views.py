@@ -195,8 +195,8 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
             position_delta = 1.0 / sentence_length
             # print "r['m'] = ", r['m']
             for x in range(keyword_total):
-                distribution[x][0].append(position_tuple[x] / sentence_length)
-                distribution[x][1].append(position_tuple[x] / sentence_length + position_delta)
+                distribution[x][0].append((position_tuple[x] / sentence_length, 1.0/position_delta))
+                distribution[x][1].append((position_tuple[x] / sentence_length + position_delta, 1.0/position_delta))
         # _sr = [r for r in _sr if r['c'] < sys.maxint] #filter out critical unmatch results
         _sr.sort(key=itemgetter('c'))
         _sr = _sr[:count]
@@ -217,6 +217,8 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
     vis_dict["vis_data"] = vis_data
     vis_dict["y_range"] = y_range
     vis_dict["color_data"] = color_data
+    print "Data: ", sum(vis_data[0]), sum(vis_data[1])
+
     return sr, vis_dict
 
 
