@@ -23,6 +23,20 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+# Stanfor CoreNLP Server Settings
+
+USE_NLPSERVER = True
+import json
+NLPSERVER_URL = 'http://166.111.139.15:9000/'
+NLPSERVER_LEMMATIZE_PROPS = {
+    'properties': json.dumps({
+        'annotators': 'tokenize,ssplit,pos,lemma',
+        'outputFormat': 'conll',
+        'tokenize.whitespace': True,
+        'ssplit.isOneSentence': True,
+    }),
+}
+
 
 # Registration settings
 
