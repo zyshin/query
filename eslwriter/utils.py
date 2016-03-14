@@ -6,7 +6,11 @@ from django.conf import settings
 
 from common.models import *
 from common.utils import mongo_get_object, mongo_get_object_or_404, timeit
-from .wordnet import lemmatize, synonyms
+from .wordnet import synonyms
+if settings.USE_NLPSERVER:
+    from .nlpclient import lemmatize
+else:
+    from .wordnet import lemmatize
 from .translator import is_cn, translate
 
 
