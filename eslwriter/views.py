@@ -217,7 +217,7 @@ def sentence_query(ii, dd, cids, ref, start=0, count=100):
     vis_dict["vis_data"] = vis_data
     vis_dict["y_range"] = y_range
     vis_dict["color_data"] = color_data
-    print "Data: ", sum(vis_data[0]), sum(vis_data[1])
+    # print "Data: ", sum(vis_data[0]), sum(vis_data[1])
 
     return sr, vis_dict
 

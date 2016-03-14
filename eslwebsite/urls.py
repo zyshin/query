@@ -3,7 +3,7 @@ from django.contrib import admin
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = [
 	# Uncomment the admin/doc line below to enable admin documentation:
 	# url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
@@ -21,4 +21,4 @@ urlpatterns = patterns('',
 	# url(r'^corpus/', include('corpus_building.urls')),
 
 	# url(r'^monitor/', include('monitor.urls')),
-)
+]
